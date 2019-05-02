@@ -27,5 +27,9 @@ My Hardware: Xiaomi Redmi 6 with Android 8.1
 ### Sample images
 >You can try the sample images I provided in case you got any issues
 
+### Where to check the results?
+>You can use the site <1sudoku.com> and the code in the bottom right to get the results of the sample sudokus
+
 ### Other issues
 >Feel free to contact me at <janhein@stud.ntnu.no>
+
