@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import com.googlecode.tesseract.android.TessBaseAPI;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -145,7 +147,13 @@ public class MainActivity extends AppCompatActivity {
         btn_Solve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initSolving();
+                if(myBitmap == null) {
+                    Toast.makeText(getBaseContext(), "No Image scanned, manual mode", Toast.LENGTH_LONG).show();
+                    sudokuManager = new SudokuManager(new int[9][9]);
+
+                } else {
+                    initSolving();
+                }
                 Intent intent = new Intent(MainActivity.this, FieldActivity.class);
                 Bundle b = new Bundle();
 
@@ -329,6 +337,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     Bitmap detectSudokuGrid(Mat input, Bitmap originalSudoku) {
+        try{
+
+
         Mat outerBox = input.clone();
         Mat sudoku = new Mat();
 
@@ -425,6 +436,10 @@ public class MainActivity extends AppCompatActivity {
         Utils.matToBitmap(undistorted, bmp);
 
         return bmp;
+        }catch(Exception e) {
+            return originalSudoku;
+        }
+
     }
 
 
@@ -467,58 +482,80 @@ public class MainActivity extends AppCompatActivity {
         Imgproc.cvtColor(orig, orig, Imgproc.COLOR_GRAY2BGR);
 
 
-        Mat kernel = new Mat( 3, 3, CvType.CV_8U );
-        int row = 0, col = 0;
-        kernel.put(row ,col, 0, 1, 0, 1, 1, 1, 0, 1, 0 );
+        bmp = Bitmap.createBitmap(test.width(), test.height(), Bitmap.Config.ARGB_8888);
 
-        List<MatOfPoint> conts = new ArrayList<MatOfPoint>();
-
-        Mat hier = new Mat();
+        try {
 
 
+            Mat kernel = new Mat(3, 3, CvType.CV_8U);
+            int row = 0, col = 0;
+            kernel.put(row, col, 0, 1, 0, 1, 1, 1, 0, 1, 0);
 
-        Imgproc.GaussianBlur(test, test, new Size(7,7), 0);
-        Imgproc.adaptiveThreshold(test, test, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 11,2);
+            List<MatOfPoint> conts = new ArrayList<MatOfPoint>();
 
-        Core.bitwise_not(test, test);
-        kernel.put(row ,col, 0, 1, 0, 1, 1, 1, 0, 1, 0 );
-
-        Imgproc.line(test, new Point(0, 0), new Point(8, 8), new Scalar(0,0,0), 2);
-
-        Imgproc.line(test, new Point(0, test.height()), new Point(8, test.height()-8), new Scalar(0,0,0), 2);
-
-        Imgproc.line(test, new Point(test.width(), 0), new Point(test.width()-8, 8), new Scalar(0,0,0), 2);
-        Imgproc.line(test, new Point(test.width(), test.height()), new Point(test.width()-8, test.height()-8), new Scalar(0,0,0), 2);
+            Mat hier = new Mat();
 
 
-        Imgproc.findContours(test, conts, hier, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.GaussianBlur(test, test, new Size(7, 7), 0);
+            Imgproc.adaptiveThreshold(test, test, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 11, 2);
 
-        Imgproc.cvtColor(test, test, Imgproc.COLOR_GRAY2BGR);
+            Core.bitwise_not(test, test);
+            kernel.put(row, col, 0, 1, 0, 1, 1, 1, 0, 1, 0);
 
-        Collections.sort(conts, new Comparator<MatOfPoint>() {
-            @Override
-            public int compare(MatOfPoint o1, MatOfPoint o2) {
-                double i = Math.abs( Imgproc.contourArea(o1));
-                double j = Math.abs( Imgproc.contourArea(o2));
-                return j > i ? -1 : j < i ? 1 : 0;
+            Imgproc.line(test, new Point(0, 0), new Point(8, 8), new Scalar(0, 0, 0), 2);
+
+            Imgproc.line(test, new Point(0, test.height()), new Point(8, test.height() - 8), new Scalar(0, 0, 0), 2);
+
+            Imgproc.line(test, new Point(test.width(), 0), new Point(test.width() - 8, 8), new Scalar(0, 0, 0), 2);
+            Imgproc.line(test, new Point(test.width(), test.height()), new Point(test.width() - 8, test.height() - 8), new Scalar(0, 0, 0), 2);
+
+
+            Imgproc.findContours(test, conts, hier, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            Imgproc.cvtColor(test, test, Imgproc.COLOR_GRAY2BGR);
+
+            Collections.sort(conts, new Comparator<MatOfPoint>() {
+                @Override
+                public int compare(MatOfPoint o1, MatOfPoint o2) {
+                    double i = Math.abs(Imgproc.contourArea(o1));
+                    double j = Math.abs(Imgproc.contourArea(o2));
+                    return j > i ? -1 : j < i ? 1 : 0;
+                }
+            });
+
+
+            Collections.reverse(conts);
+
+
+            MatOfPoint closest = conts.get(0);
+            MatOfPoint closest2 = conts.size() > 1 ? conts.get(1) : conts.get(0);
+            Point center = new Point(test.width() * 0.5, test.height() * 0.5);
+
+            int index = 0;
+            for (MatOfPoint p : conts) {
+                double area = Imgproc.contourArea(p);
+                if (area < 100)
+                    continue;
+                double x = Imgproc.moments(p).m10 / Imgproc.moments(p).m00;
+                double y = Imgproc.moments(p).m01 / Imgproc.moments(p).m00;
+
+                double xC = Imgproc.moments(closest).m10 / Imgproc.moments(closest).m00;
+                double yC = Imgproc.moments(closest).m01 / Imgproc.moments(closest).m00;
+
+                double xC2 = Imgproc.moments(closest2).m10 / Imgproc.moments(closest2).m00;
+                double yC2 = Imgproc.moments(closest2).m01 / Imgproc.moments(closest2).m00;
+
+                if (distance_between(new Point(x, y), center) < distance_between(new Point(xC, yC), center)) {
+                    closest2 = closest;
+                    closest = p;
+
+
+                } else if (distance_between(new Point(x, y), center) < distance_between(new Point(xC2, yC2), center)) {
+                    closest2 = p;
+                }
+
+                index++;
             }
-        });
-
-
-        Collections.reverse(conts);
-
-
-        MatOfPoint closest = conts.get(0);
-        MatOfPoint closest2 = conts.size() > 1 ? conts.get(1) : conts.get(0);
-        Point center = new Point(test.width() * 0.5, test.height() * 0.5);
-
-        int index = 0;
-        for(MatOfPoint p : conts) {
-            double area = Imgproc.contourArea(p);
-            if(area < 100)
-                continue;
-            double x = Imgproc.moments(p).m10 / Imgproc.moments(p).m00;
-            double y = Imgproc.moments(p).m01 / Imgproc.moments(p).m00;
 
             double xC = Imgproc.moments(closest).m10 / Imgproc.moments(closest).m00;
             double yC = Imgproc.moments(closest).m01 / Imgproc.moments(closest).m00;
@@ -526,66 +563,50 @@ public class MainActivity extends AppCompatActivity {
             double xC2 = Imgproc.moments(closest2).m10 / Imgproc.moments(closest2).m00;
             double yC2 = Imgproc.moments(closest2).m01 / Imgproc.moments(closest2).m00;
 
-            if(distance_between(new Point(x,y), center) < distance_between(new Point(xC, yC), center)) {
-                closest2 = closest;
-                closest = p;
-
-
-            }
-            else if(distance_between(new Point(x,y), center) < distance_between(new Point(xC2, yC2), center)) {
-                closest2 = p;
+            if (Imgproc.contourArea(closest2) > Imgproc.contourArea(closest) && distance_between(new Point(xC, yC), new Point(xC2, yC2)) < 1) {
+                closest = closest2;
             }
 
-            index++;
+            bmp = Bitmap.createBitmap(test.width(), test.height(), Bitmap.Config.ARGB_8888);
+
+            ArrayList<MatOfPoint> mp = new ArrayList<MatOfPoint>();
+
+            mp.add(closest);
+
+            xC = Imgproc.moments(closest).m10 / Imgproc.moments(closest).m00;
+            yC = Imgproc.moments(closest).m01 / Imgproc.moments(closest).m00;
+
+            Mat mask = new Mat(test.width(), test.height(), CvType.CV_8UC3, new Scalar(0, 0, 0));
+
+            Point pp = new Point(xC, yC);
+            double dis = distance_between(center, pp);
+
+            Mat mask2 = new Mat(test.width(), test.height(), CvType.CV_8UC3, new Scalar(0, 0, 0));
+            Imgproc.circle(mask2, center, 10, new Scalar(255, 255, 255), Imgproc.FILLED);
+
+            Mat test2 = new Mat();
+            Core.bitwise_and(test, mask2, test2);
+
+            Imgproc.cvtColor(test2, test2, Imgproc.COLOR_RGB2GRAY);
+
+            int num = Core.countNonZero(test2);
+
+
+            if (dis < 50.0d && num >= 10) {
+                Imgproc.drawContours(mask, mp, -1, new Scalar(255, 255, 255), 0);
+
+                //Core.bitwise_and(test, mask, test);*/
+
+                Imgproc.fillPoly(mask, mp, new Scalar(255, 255, 255));
+            }
+
+            Core.bitwise_and(mask, test, test);
+
+            Utils.matToBitmap(test, bmp);
         }
+        catch(Exception e) {
 
-        double xC = Imgproc.moments(closest).m10 / Imgproc.moments(closest).m00;
-        double yC = Imgproc.moments(closest).m01 / Imgproc.moments(closest).m00;
-
-        double xC2 = Imgproc.moments(closest2).m10 / Imgproc.moments(closest2).m00;
-        double yC2 = Imgproc.moments(closest2).m01 / Imgproc.moments(closest2).m00;
-
-        if(Imgproc.contourArea(closest2) > Imgproc.contourArea(closest) && distance_between(new Point(xC, yC), new Point(xC2, yC2)) < 1) {
-            closest = closest2;
         }
-
-        bmp = Bitmap.createBitmap(test.width(), test.height(), Bitmap.Config.ARGB_8888);
-
-        ArrayList<MatOfPoint> mp = new ArrayList<MatOfPoint>();
-
-        mp.add(closest);
-
-         xC = Imgproc.moments(closest).m10 / Imgproc.moments(closest).m00;
-         yC = Imgproc.moments(closest).m01 / Imgproc.moments(closest).m00;
-
-        Mat mask = new Mat(test.width(), test.height(), CvType.CV_8UC3, new Scalar(0,0,0));
-
-        Point pp = new Point(xC, yC);
-        double dis = distance_between(center, pp);
-
-        Mat mask2 = new Mat(test.width(), test.height(), CvType.CV_8UC3, new Scalar(0,0,0));
-        Imgproc.circle(mask2, center, 10, new Scalar(255,255,255), Imgproc.FILLED);
-
-        Mat test2 = new Mat();
-        Core.bitwise_and(test, mask2, test2);
-
-        Imgproc.cvtColor(test2,test2, Imgproc.COLOR_RGB2GRAY);
-
-        int num = Core.countNonZero(test2);
-
-
-        if(dis < 50.0d && num >= 10) {
-            Imgproc.drawContours(mask, mp, -1, new Scalar(255,255,255), 0);
-
-            //Core.bitwise_and(test, mask, test);*/
-
-            Imgproc.fillPoly(mask, mp, new Scalar(255,255,255));
-        }
-
-        Core.bitwise_and(mask, test, test);
-
-        Utils.matToBitmap(test, bmp);
-
         return bmp;
     }
 
