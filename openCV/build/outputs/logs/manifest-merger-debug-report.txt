@@ -1,0 +1,37 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:2:1-6:12
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:2:1-6:12
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:2:1-6:12
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:2:1-6:12
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:2:1-6:12
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:2:1-6:12
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:2:1-6:12
+	package
+		ADDED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:3:7-27
+		INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+		INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+	android:versionName
+		ADDED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:5:7-34
+		INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+		INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:2:11-69
+	android:versionCode
+		ADDED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml:4:7-33
+		INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+		INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+uses-sdk
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+		ADDED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+		INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+		ADDED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
+		INJECTED from /Users/jan/Documents/ntnu/mobile/Sudoku/openCV/AndroidManifest.xml
