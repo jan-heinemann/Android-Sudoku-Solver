@@ -1,3 +1,6 @@
+# Warning - Testing
+Testing the app by taking a picture of a sudoku on a screen will not work, this is due to the [Moiré effect](https://en.wikipedia.org/wiki/Moiré_pattern) which will throw off the ocr (tesseract). If you want to test the scanning you should either print out a sudoku, find a magazine with a sudoku or use one of the provided sample images.
+
 # Notes
 ## Error while installing the apk
 If there's an error while installing the apk you might need to simply rebuild the project.
