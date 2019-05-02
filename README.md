@@ -11,6 +11,8 @@ API level : 26 - 28 (8 - 9.0)
 
 My Hardware: Xiaomi Redmi 6 with Android 8.1
 
+Emulator: Nexus 5 with Android 9
+
 ## Usage
 
 1. Take a picture of a sudoku
